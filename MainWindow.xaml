@@ -1,15 +1,46 @@
 ﻿<Window x:Class="Cardinal.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
+        xmlns:local="clr-namespace:Customcontrols"
+        Title="MainWindow" Height="480" Width="800">
+    
+    <Grid Margin="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
-        <Canvas x:Name="Scene" MouseDown="Scene_MouseDown" Background="White">
-            <Polyline x:Name="InputLine" Stroke="Black" StrokeThickness="3"></Polyline>
-        </Canvas>
-        <Button Content="Button" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Button_Click"/>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Label Content="InputLineColor:" VerticalContentAlignment="Center" Grid.Row="0"/>
+            <local:Colorpicker x:Name="InputLineColor" Grid.Row="1"/>
+            <Label Content="SmoothLineColor:" VerticalContentAlignment="Center" Grid.Row="2"/>
+            <local:Colorpicker x:Name="SmoothLineColor" Grid.Row="3"/>
+            <Label Content="DisplayMode:" VerticalContentAlignment="Center" Grid.Row="4"/>
+            <ComboBox Grid.Row="5"/>
+            <Label Content="Tension:" VerticalContentAlignment="Center" Grid.Row="6"/>
+            <Slider Grid.Row="7" Minimum="0" Maximum="1" SmallChange="0.01"/>
+            <Label Content="Grain:" VerticalContentAlignment="Center" Grid.Row="8"/>
+            <Slider Grid.Row="9" Minimum="1" Maximum="100" SmallChange="1"/>
+            <Button Content="Clear" Grid.Row="10"/>
+        </Grid>
+
+        <Border BorderBrush="Gray" BorderThickness="2" Grid.Column="1" Margin="5,0,0,0">
+            <Canvas x:Name="Scene" MouseDown="Scene_MouseDown" Background="White">
+                <Polyline x:Name="InputLine" Stroke="Blue" StrokeThickness="3"></Polyline>
+                <Polyline x:Name="SmoothLine" Stroke="Red" StrokeThickness="3"></Polyline>
+            </Canvas>
+        </Border>
     </Grid>
 </Window>
