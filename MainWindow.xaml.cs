@@ -35,11 +35,10 @@ namespace Cardinal {
         private DisplayMode mode = DisplayMode.Both;
         private double tension = 1;
         private int grain = 20;
+        private double thickness = 2;
 
         public MainWindow() {
             InitializeComponent();
-
-            Display.ItemsSource = Enum.GetValues(typeof(DisplayMode));
             DataContext = this;
             PropertyChanged += new PropertyChangedEventHandler(SceneChanged);
         }
@@ -98,6 +97,16 @@ namespace Cardinal {
             }
         }
 
+        public double Thickness {
+            get {
+                return thickness;
+            }
+            set {
+                thickness = value;
+                NotifyPropertyChanged("Thickness");
+            }
+        }
+
         public Visibility ShowInputLine {
             get {
                 return (mode == DisplayMode.Input || mode == DisplayMode.Both) ? Visibility.Visible : Visibility.Hidden;
@@ -119,7 +128,7 @@ namespace Cardinal {
         }
 
         private void Scene_MouseDown(object sender, MouseButtonEventArgs e) {
-            if (e.ButtonState == MouseButtonState.Pressed) {
+            if (e.LeftButton == MouseButtonState.Pressed) {
                 InputLine.Points.Add(e.GetPosition(Scene));
                 NotifyPropertyChanged("Scene");
             }
