@@ -34,7 +34,7 @@ namespace Cardinal {
             }
         }
 
-        public static Matrix operator *(Matrix one, Matrix two) {
+        public static Matrix operator* (Matrix one, Matrix two) {
             Debug.Assert(one.Cols == two.Rows);
             Debug.Assert(one.Rows == two.Cols);
 

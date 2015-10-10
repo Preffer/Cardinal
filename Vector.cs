@@ -28,7 +28,7 @@ namespace Cardinal {
             }
         }
 
-        public static double operator *(Vector one, Vector two) {
+        public static double operator* (Vector one, Vector two) {
             Debug.Assert(one.Length == two.Length);
 
             double sum = 0;
@@ -59,7 +59,7 @@ namespace Cardinal {
             return result;
         }
 
-        public static Vector operator *(Matrix matrix, Vector vector) {
+        public static Vector operator* (Matrix matrix, Vector vector) {
             Debug.Assert(matrix.Cols == vector.Length);
 
             int rows = matrix.Rows;

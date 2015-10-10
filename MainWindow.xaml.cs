@@ -82,7 +82,6 @@ namespace Cardinal {
             set {
                 tension = value;
                 NotifyPropertyChanged("Tension");
-                NotifyPropertyChanged("Scene");
             }
         }
 
@@ -93,7 +92,6 @@ namespace Cardinal {
             set {
                 grain = value;
                 NotifyPropertyChanged("Grain");
-                NotifyPropertyChanged("Scene");
             }
         }
 
@@ -130,7 +128,7 @@ namespace Cardinal {
         private void Scene_MouseDown(object sender, MouseButtonEventArgs e) {
             if (e.LeftButton == MouseButtonState.Pressed) {
                 InputLine.Points.Add(e.GetPosition(Scene));
-                NotifyPropertyChanged("Scene");
+                NotifyPropertyChanged("InputLine");
             }
         }
 
@@ -140,25 +138,25 @@ namespace Cardinal {
         }
 
         private void SceneChanged(object sender, PropertyChangedEventArgs e) {
-            Console.WriteLine(e.PropertyName);
+            if (e.PropertyName == "InputLine" || e.PropertyName == "Tension" || e.PropertyName == "Grain") {
+                if (InputLine.Points.Count() > 0) {
+                    List<Point> controlPoint = new List<Point>();
+                    List<Point> smoothPoint = new List<Point>();
 
-            if (e.PropertyName == "Scene") {
-                List<Point> controlPoint = new List<Point>();
-                List<Point> smoothPoint = new List<Point>();
+                    controlPoint.Add(InputLine.Points.First());
+                    controlPoint.AddRange(InputLine.Points);
+                    controlPoint.Add(InputLine.Points.Last());
 
-                controlPoint.Add(InputLine.Points.First());
-                controlPoint.AddRange(InputLine.Points);
-                controlPoint.Add(InputLine.Points.Last());
-
-                int count = controlPoint.Count() - 3;
-                double step = 1.0 / grain;
-                for (int i = 0; i < count; i++) {
-                    for (double u = 0; u <= 1; u += step) {
-                        smoothPoint.Add(Interpolation(controlPoint[i], controlPoint[i + 1], controlPoint[i + 2], controlPoint[i + 3], u, tension));
+                    int count = controlPoint.Count() - 3;
+                    double step = 1.0 / grain;
+                    for (int i = 0; i < count; i++) {
+                        for (double u = 0; u <= 1; u += step) {
+                            smoothPoint.Add(Interpolation(controlPoint[i], controlPoint[i + 1], controlPoint[i + 2], controlPoint[i + 3], u, tension));
+                        }
                     }
-                }
 
-                SmoothLine.Points = new PointCollection(smoothPoint);
+                    SmoothLine.Points = new PointCollection(smoothPoint);
+                }
             }
         }
 
