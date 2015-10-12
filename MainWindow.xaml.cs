@@ -257,11 +257,11 @@ namespace Cardinal {
             }
         }
 
-        private Point Interpolation(Point p1, Point p2, Point p3, Point p4, double u, double t) {
+        private Point Interpolation(Point p0, Point p1, Point p2, Point p3, double u, double t) {
             Vector uVector = new Vector(new double[4] { Math.Pow(u, 3), Math.Pow(u, 2), u, 1 });
             Vector uhVector = uVector * Hermite;
-            Vector pxVector = new Vector(new double[4] { p2.X, p3.X, t * (p3.X - p1.X), t * (p4.X - p2.X) });
-            Vector pyVector = new Vector(new double[4] { p2.Y, p3.Y, t * (p3.Y - p1.Y), t * (p4.Y - p2.Y) });
+            Vector pxVector = new Vector(new double[4] { p1.X, p2.X, t * (p2.X - p0.X), t * (p3.X - p1.X) });
+            Vector pyVector = new Vector(new double[4] { p1.Y, p2.Y, t * (p2.Y - p0.Y), t * (p3.Y - p1.Y) });
 
             return new Point(uhVector * pxVector, uhVector * pyVector);
         }
