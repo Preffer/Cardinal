@@ -34,6 +34,7 @@
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Content="InputLineColor:" VerticalContentAlignment="Center"/>
             <local:Colorpicker x:Name="InputLineColor" Grid.Row="1" SelectedColor="Cyan"/>
@@ -47,7 +48,8 @@
             <Slider Grid.Row="9" Minimum="1" Maximum="40" SmallChange="1" Value="{Binding Grain}"/>
             <Label Grid.Row="10" ContentStringFormat="Thickness: {0}" Content="{Binding Thickness}" VerticalContentAlignment="Center"/>
             <Slider Grid.Row="11" Minimum="1" Maximum="10" SmallChange="0.1" Value="{Binding Thickness}"/>
-            <Button x:Name="ClearButton" Grid.Row="12" Content="Clear" Click="ClearButton_Click"/>
+            <Button x:Name="ClearButton" Grid.Row="12" Content="Clear" Click="ClearButton_Click" Margin="0,0,0,2.5"/>
+            <Button x:Name="HelpButton" Grid.Row="13" Content="Help" Click="HelpButton_Click" Margin="0,2.5,0,0"/>
         </Grid>
 
         <Border BorderBrush="Gray" BorderThickness="2" Grid.Column="1" Margin="5,0,0,0">

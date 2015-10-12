@@ -173,6 +173,16 @@ namespace Cardinal {
             emode = EditMode.None;
         }
 
+        private void HelpButton_Click(object sender, RoutedEventArgs e) {
+            string helpText = "Click left button to append point\n"
+                            + "Click middle button to move the nearest point\n"
+                            + "Click right button to insert point\n"
+                            + "Press Escape to save pending modification\n"
+                            + "Press Delete to delete the pending point";
+
+            MessageBox.Show(helpText, "Help", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e) {
             System.Windows.Media.Matrix scaleMatrix = new System.Windows.Media.Matrix();
             scaleMatrix.Scale(e.NewSize.Width / e.PreviousSize.Width, e.NewSize.Height / e.PreviousSize.Height);
