@@ -121,7 +121,7 @@ namespace Cardinal {
             if (e.PropertyName == "InputLine" || e.PropertyName == "Tension" || e.PropertyName == "Grain") {
                 if (InputLine.Points.Count() > 0) {
                     List<Point> controlPoint = new List<Point>();
-                    List<Point> smoothPoint = new List<Point>();
+                    PointCollection smoothPoint = new PointCollection();
 
                     controlPoint.Add(InputLine.Points.First());
                     controlPoint.AddRange(InputLine.Points);
@@ -130,12 +130,13 @@ namespace Cardinal {
                     int count = controlPoint.Count() - 3;
                     double step = 1.0 / grain;
                     for (int i = 0; i < count; i++) {
-                        for (double u = 0; u <= 1; u += step) {
+                        for (double u = 0; u < 1.0 ; u += step) {
                             smoothPoint.Add(Interpolation(controlPoint[i], controlPoint[i + 1], controlPoint[i + 2], controlPoint[i + 3], u, tension));
                         }
+                        smoothPoint.Add(Interpolation(controlPoint[i], controlPoint[i + 1], controlPoint[i + 2], controlPoint[i + 3], 1.0, tension));
                     }
 
-                    SmoothLine.Points = new PointCollection(smoothPoint);
+                    SmoothLine.Points = smoothPoint;
                 }
             }
         }
