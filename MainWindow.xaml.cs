@@ -43,26 +43,6 @@ namespace Cardinal {
             PropertyChanged += new PropertyChangedEventHandler(SceneChanged);
         }
 
-        public Brush InputLineColor {
-            get {
-                return inputLineColor;
-            }
-            set {
-                inputLineColor = value;
-                NotifyPropertyChanged("InputLineColor");
-            }
-        }
-
-        public Brush SmoothLineColor {
-            get {
-                return smoothLineColor;
-            }
-            set {
-                smoothLineColor = value;
-                NotifyPropertyChanged("SmoothLineColor");
-            }
-        }
-
         public DisplayMode Mode {
             get {
                 return mode;

@@ -36,9 +36,9 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Content="InputLineColor:" VerticalContentAlignment="Center"/>
-            <local:Colorpicker Grid.Row="1" SelectedColor="{Binding InputLineColor}"/>
+            <local:Colorpicker x:Name="InputLineColor" Grid.Row="1" SelectedColor="Cyan"/>
             <Label Grid.Row="2" Content="SmoothLineColor:" VerticalContentAlignment="Center"/>
-            <local:Colorpicker Grid.Row="3" SelectedColor="{Binding SmoothLineColor}"/>
+            <local:Colorpicker x:Name="SmoothLineColor" Grid.Row="3" SelectedColor="Crimson"/>
             <Label Grid.Row="4" Content="DisplayMode:" VerticalContentAlignment="Center"/>
             <ComboBox Grid.Row="5" VerticalContentAlignment="Center" ItemsSource="{Binding Source={StaticResource DisplayModeEnum}}" SelectedValue="{Binding Mode}"/>
             <Label Grid.Row="6" ContentStringFormat="Tension: {0}" Content="{Binding Tension}" VerticalContentAlignment="Center"/>
@@ -52,8 +52,8 @@
 
         <Border BorderBrush="Gray" BorderThickness="2" Grid.Column="1" Margin="5,0,0,0">
             <Canvas x:Name="Scene" MouseDown="Scene_MouseDown" Background="White">
-                <Polyline x:Name="InputLine" Stroke="{Binding InputLineColor}" StrokeThickness="{Binding Thickness}" Visibility="{Binding ShowInputLine}"></Polyline>
-                <Polyline x:Name="SmoothLine" Stroke="{Binding SmoothLineColor}" StrokeThickness="{Binding Thickness}" Visibility="{Binding ShowSmoothLine}"></Polyline>
+                <Polyline x:Name="InputLine" Stroke="{Binding ElementName=InputLineColor, Path=SelectedColor}" StrokeThickness="{Binding Thickness}" Visibility="{Binding ShowInputLine}"></Polyline>
+                <Polyline x:Name="SmoothLine" Stroke="{Binding ElementName=SmoothLineColor, Path=SelectedColor}" StrokeThickness="{Binding Thickness}" Visibility="{Binding ShowSmoothLine}"></Polyline>
             </Canvas>
         </Border>
     </Grid>
