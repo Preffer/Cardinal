@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.ComponentModel;
+using System.Windows.Media.Imaging;
 
 namespace Cardinal {
     public enum DisplayMode {
@@ -166,6 +168,46 @@ namespace Cardinal {
             }
         }
 
+        private void SaveButton_Click(object sender, RoutedEventArgs e) {
+            Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.DefaultExt = ".png";
+            dialog.Filter = "PNG Image (*.png)|*.png|JPG Image (*.jpg)|*.jpg|TIF Image (*.tif)|*.tif|BMP Image (*.bmp)|*.bmp";
+
+            if (dialog.ShowDialog() == true) {
+                RenderTargetBitmap bitmap = new RenderTargetBitmap((int)Scene.ActualWidth, (int)Scene.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+                bitmap.Render(Scene);
+                BitmapEncoder encoder = null;
+                switch (Path.GetExtension(dialog.FileName)) {
+                    case ".png": {
+                        encoder = new PngBitmapEncoder();
+                        break;
+                    }
+                    case ".jpg": {
+                        encoder = new JpegBitmapEncoder();
+                        break;
+                    }
+                    case "*.tif": {
+                        encoder = new TiffBitmapEncoder();
+                        break;
+                    }
+                    case "*.bmp": {
+                        encoder = new BmpBitmapEncoder();
+                        break;
+                    }
+                }
+
+                if (encoder != null) {
+                    encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                    using (FileStream file = File.Create(dialog.FileName)) {
+                        encoder.Save(file);
+                    }
+                    MessageBox.Show(FindResource("SaveBitmapSuccessText") as string + dialog.FileName, FindResource("SaveBitmapSuccessTitle") as string, MessageBoxButton.OK, MessageBoxImage.Information);
+                } else {
+                    MessageBox.Show(FindResource("SaveBitmapFailText") as string + dialog.FileName, FindResource("SaveBitmapFailTtile") as string, MessageBoxButton.OK, MessageBoxImage.Stop);
+                }
+            }
+        }
+
         private void ClearButton_Click(object sender, RoutedEventArgs e) {
             InputLine.Points.Clear();
             SmoothLine.Points.Clear();
@@ -204,7 +246,7 @@ namespace Cardinal {
                     int count = controlPoint.Count - 3;
                     double step = 1.0 / grain;
                     for (int i = 0; i < count; i++) {
-                        for (double u = 0; u < 1.0 ; u += step) {
+                        for (double u = 0; u < 1.0; u += step) {
                             smoothPoint.Add(Interpolation(controlPoint[i], controlPoint[i + 1], controlPoint[i + 2], controlPoint[i + 3], u, tension));
                         }
                         smoothPoint.Add(Interpolation(controlPoint[i], controlPoint[i + 1], controlPoint[i + 2], controlPoint[i + 3], 1.0, tension));
@@ -223,6 +265,5 @@ namespace Cardinal {
 
             return new Point(uhVector * pxVector, uhVector * pyVector);
         }
-
     }
 }
