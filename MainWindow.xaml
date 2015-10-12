@@ -4,7 +4,7 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:Customcontrols"
         xmlns:this="clr-namespace:Cardinal"
-        Title="Cardinal" Height="480" Width="800" KeyDown="Scene_KeyDown">
+        Title="Cardinal" Height="480" Width="800" KeyDown="Scene_KeyDown" SizeChanged="Window_SizeChanged">
 
     <Window.Resources>
         <ObjectDataProvider x:Key="DisplayModeEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
