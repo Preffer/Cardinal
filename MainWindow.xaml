@@ -4,7 +4,7 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:Customcontrols"
         xmlns:this="clr-namespace:Cardinal"
-        Title="MainWindow" Height="480" Width="800">
+        Title="Cardinal" Height="480" Width="800" KeyDown="Scene_KeyDown">
 
     <Window.Resources>
         <ObjectDataProvider x:Key="DisplayModeEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
@@ -40,7 +40,7 @@
             <Label Grid.Row="2" Content="SmoothLineColor:" VerticalContentAlignment="Center"/>
             <local:Colorpicker x:Name="SmoothLineColor" Grid.Row="3" SelectedColor="Crimson"/>
             <Label Grid.Row="4" Content="DisplayMode:" VerticalContentAlignment="Center"/>
-            <ComboBox Grid.Row="5" VerticalContentAlignment="Center" ItemsSource="{Binding Source={StaticResource DisplayModeEnum}}" SelectedValue="{Binding Mode}"/>
+            <ComboBox Grid.Row="5" VerticalContentAlignment="Center" ItemsSource="{Binding Source={StaticResource DisplayModeEnum}}" SelectedValue="{Binding DMode}"/>
             <Label Grid.Row="6" ContentStringFormat="Tension: {0}" Content="{Binding Tension}" VerticalContentAlignment="Center"/>
             <Slider Grid.Row="7" Minimum="0" Maximum="1" SmallChange="0.01" Value="{Binding Tension}"/>
             <Label Grid.Row="8" ContentStringFormat="Grain: {0}" Content="{Binding Grain}" VerticalContentAlignment="Center"/>
@@ -51,7 +51,7 @@
         </Grid>
 
         <Border BorderBrush="Gray" BorderThickness="2" Grid.Column="1" Margin="5,0,0,0">
-            <Canvas x:Name="Scene" MouseDown="Scene_MouseDown" Background="White">
+            <Canvas x:Name="Scene" Background="White" MouseDown="Scene_MouseDown" MouseUp="Scene_MouseUp" MouseMove="Scene_MouseMove">
                 <Polyline x:Name="InputLine" Stroke="{Binding ElementName=InputLineColor, Path=SelectedColor}" StrokeThickness="{Binding Thickness}" Visibility="{Binding ShowInputLine}"></Polyline>
                 <Polyline x:Name="SmoothLine" Stroke="{Binding ElementName=SmoothLineColor, Path=SelectedColor}" StrokeThickness="{Binding Thickness}" Visibility="{Binding ShowSmoothLine}"></Polyline>
             </Canvas>

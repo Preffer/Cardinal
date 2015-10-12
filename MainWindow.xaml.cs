@@ -22,6 +22,13 @@ namespace Cardinal {
         Smooth
     }
 
+    public enum EditMode {
+        None,
+        Append,
+        Move,
+        Insert
+    }
+
     public partial class MainWindow : Window, INotifyPropertyChanged {
         public static readonly Matrix Hermite = new Matrix(new double[4, 4] {
             {2, -2, 1, 1},
@@ -32,10 +39,12 @@ namespace Cardinal {
 
         private Brush inputLineColor = Brushes.Cyan;
         private Brush smoothLineColor = Brushes.Crimson;
-        private DisplayMode mode = DisplayMode.Both;
+        private DisplayMode dmode = DisplayMode.Both;
+        private EditMode emode = EditMode.None;
         private double tension = 1;
         private int grain = 20;
         private double thickness = 2;
+        private int activePointIndex = -1;
 
         public MainWindow() {
             InitializeComponent();
@@ -43,13 +52,13 @@ namespace Cardinal {
             PropertyChanged += new PropertyChangedEventHandler(SceneChanged);
         }
 
-        public DisplayMode Mode {
+        public DisplayMode DMode {
             get {
-                return mode;
+                return dmode;
             }
             set {
-                mode = value;
-                NotifyPropertyChanged("Mode");
+                dmode = value;
+                NotifyPropertyChanged("DMode");
                 NotifyPropertyChanged("ShowInputLine");
                 NotifyPropertyChanged("ShowSmoothLine");
             }
@@ -87,13 +96,13 @@ namespace Cardinal {
 
         public Visibility ShowInputLine {
             get {
-                return (mode == DisplayMode.Input || mode == DisplayMode.Both) ? Visibility.Visible : Visibility.Hidden;
+                return (dmode == DisplayMode.Input || dmode == DisplayMode.Both) ? Visibility.Visible : Visibility.Hidden;
             }
         }
 
         public Visibility ShowSmoothLine {
             get {
-                return (mode == DisplayMode.Smooth || mode == DisplayMode.Both) ? Visibility.Visible : Visibility.Hidden;
+                return (dmode == DisplayMode.Smooth || dmode == DisplayMode.Both) ? Visibility.Visible : Visibility.Hidden;
             }
         }
 
@@ -107,19 +116,74 @@ namespace Cardinal {
 
         private void Scene_MouseDown(object sender, MouseButtonEventArgs e) {
             if (e.LeftButton == MouseButtonState.Pressed) {
+                if (InputLine.Points.Count == 0) {
+                    InputLine.Points.Add(e.GetPosition(Scene));
+                }
                 InputLine.Points.Add(e.GetPosition(Scene));
                 NotifyPropertyChanged("InputLine");
+
+                activePointIndex = InputLine.Points.Count - 1;
+                emode = EditMode.Append;
+            }
+            if (e.MiddleButton == MouseButtonState.Pressed && InputLine.Points.Count > 0) {
+                Point clicked = e.GetPosition(Scene);
+                activePointIndex = InputLine.Points.Select((point, index) => new KeyValuePair<Point, int>(point, index)).OrderBy(pair => (clicked - pair.Key).LengthSquared).First().Value;
+                emode = EditMode.Move;
+            }
+            if (e.RightButton == MouseButtonState.Pressed && InputLine.Points.Count >= 2) {
+                Point clicked = e.GetPosition(Scene);
+                activePointIndex = InputLine.Points.Select((point, index) => new KeyValuePair<Point, int>(point, index)).OrderBy(pair => (clicked - pair.Key).LengthSquared).Take(2).OrderBy(pair => pair.Value).Last().Value;
+                InputLine.Points.Insert(activePointIndex, clicked);
+                NotifyPropertyChanged("InputLine");
+                emode = EditMode.Insert;
+            }
+        }
+
+        private void Scene_MouseUp(object sender, MouseButtonEventArgs e) {
+            if (emode != EditMode.Append) {
+                activePointIndex = -1;
+                emode = EditMode.None;
+            }
+        }
+
+        private void Scene_MouseMove(object sender, MouseEventArgs e) {
+            if (activePointIndex != -1) {
+                InputLine.Points.RemoveAt(activePointIndex);
+                InputLine.Points.Insert(activePointIndex, e.GetPosition(Scene));
+                NotifyPropertyChanged("InputLine");
+            }
+        }
+
+        private void Scene_KeyDown(object sender, KeyEventArgs e) {
+            switch (e.Key) {
+                case Key.Escape: {
+                    activePointIndex = -1;
+                    emode = EditMode.None;
+                    break;
+                }
+                case Key.Delete: {
+                    if (activePointIndex != -1) {
+                        InputLine.Points.RemoveAt(activePointIndex);
+                        NotifyPropertyChanged("InputLine");
+
+                        activePointIndex = -1;
+                        emode = EditMode.None;
+                    }
+                    break;
+                }
             }
         }
 
         private void ClearButton_Click(object sender, RoutedEventArgs e) {
             InputLine.Points.Clear();
             SmoothLine.Points.Clear();
+            activePointIndex = -1;
+            emode = EditMode.None;
         }
 
         private void SceneChanged(object sender, PropertyChangedEventArgs e) {
             if (e.PropertyName == "InputLine" || e.PropertyName == "Tension" || e.PropertyName == "Grain") {
-                if (InputLine.Points.Count() > 0) {
+                if (InputLine.Points.Count > 0) {
                     List<Point> controlPoint = new List<Point>();
                     PointCollection smoothPoint = new PointCollection();
 
@@ -127,7 +191,7 @@ namespace Cardinal {
                     controlPoint.AddRange(InputLine.Points);
                     controlPoint.Add(InputLine.Points.Last());
 
-                    int count = controlPoint.Count() - 3;
+                    int count = controlPoint.Count - 3;
                     double step = 1.0 / grain;
                     for (int i = 0; i < count; i++) {
                         for (double u = 0; u < 1.0 ; u += step) {
