@@ -5,8 +5,8 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <System:String x:Key="SaveBitmapSuccessTitle">Save Success</System:String>
-        <System:String x:Key="SaveBitmapSuccessText">Canvas has been saved to </System:String>
+        <System:String x:Key="SaveBitmapSuccessText">Canvas has been saved to</System:String>
         <System:String x:Key="SaveBitmapFailTtile">Save Failed</System:String>
-        <System:String x:Key="SaveBitmapFailText">Failed to save canvas</System:String>
+        <System:String x:Key="SaveBitmapFailText">Failed to save canvas to</System:String>
     </Application.Resources>
 </Application>

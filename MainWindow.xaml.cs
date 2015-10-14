@@ -24,7 +24,7 @@ namespace Cardinal {
     }
 
     public partial class MainWindow : Window, INotifyPropertyChanged {
-        public static readonly Matrix Hermite = new Matrix(new double[4, 4] {
+        public static readonly Algebra.Matrix Hermite = new Algebra.Matrix(new double[4, 4] {
             {2, -2, 1, 1},
             {-3, 3, -2, -1},
             {0, 0, 1, 0},
@@ -126,7 +126,20 @@ namespace Cardinal {
             }
             if (e.RightButton == MouseButtonState.Pressed && InputLine.Points.Count >= 2) {
                 Point clicked = e.GetPosition(Scene);
-                activePointIndex = InputLine.Points.Select((point, index) => new KeyValuePair<Point, int>(point, index)).OrderBy(pair => (clicked - pair.Key).LengthSquared).Take(2).OrderBy(pair => pair.Value).Last().Value;
+
+                activePointIndex = InputLine.Points
+                    .Take(InputLine.Points.Count - 1)
+                    .Select((point, index) => new KeyValuePair<Point, int>(point, index))
+                    .Zip<KeyValuePair<Point, int>, Point, KeyValuePair<double, int>>(
+                        InputLine.Points.Skip(1),
+                        (one, two) => new KeyValuePair<double, int>(
+                            (Math.Abs(Vector.AngleBetween(clicked - one.Key, two - one.Key)) < 90 && Math.Abs(Vector.AngleBetween(clicked - two, one.Key - two)) < 90)
+                            ? Math.Abs(Vector.CrossProduct(clicked - one.Key, clicked - two) / 2 / (one.Key - two).Length)
+                            : Math.Min((clicked - one.Key).Length, (clicked - two).Length),
+                            one.Value
+                        )
+                    ).OrderBy(pair => pair.Key).First().Value + 1;
+
                 InputLine.Points.Insert(activePointIndex, clicked);
                 NotifyPropertyChanged("InputLine");
                 emode = EditMode.Insert;
@@ -226,7 +239,7 @@ namespace Cardinal {
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e) {
-            System.Windows.Media.Matrix scaleMatrix = new System.Windows.Media.Matrix();
+            Matrix scaleMatrix = new Matrix();
             scaleMatrix.Scale(e.NewSize.Width / e.PreviousSize.Width, e.NewSize.Height / e.PreviousSize.Height);
 
             InputLine.Points = new PointCollection(InputLine.Points.Select(p => p * scaleMatrix));
@@ -258,10 +271,10 @@ namespace Cardinal {
         }
 
         private Point Interpolation(Point p0, Point p1, Point p2, Point p3, double u, double t) {
-            Vector uVector = new Vector(new double[4] { Math.Pow(u, 3), Math.Pow(u, 2), u, 1 });
-            Vector uhVector = uVector * Hermite;
-            Vector pxVector = new Vector(new double[4] { p1.X, p2.X, t * (p2.X - p0.X), t * (p3.X - p1.X) });
-            Vector pyVector = new Vector(new double[4] { p1.Y, p2.Y, t * (p2.Y - p0.Y), t * (p3.Y - p1.Y) });
+            Algebra.Vector uVector = new Algebra.Vector(new double[4] { Math.Pow(u, 3), Math.Pow(u, 2), u, 1 });
+            Algebra.Vector uhVector = uVector * Hermite;
+            Algebra.Vector pxVector = new Algebra.Vector(new double[4] { p1.X, p2.X, t * (p2.X - p0.X), t * (p3.X - p1.X) });
+            Algebra.Vector pyVector = new Algebra.Vector(new double[4] { p1.Y, p2.Y, t * (p2.Y - p0.Y), t * (p3.Y - p1.Y) });
 
             return new Point(uhVector * pxVector, uhVector * pyVector);
         }

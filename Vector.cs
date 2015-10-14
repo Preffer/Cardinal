@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Cardinal {
+namespace Algebra {
     public class Vector {
         private double[] array;
 
